@@ -1,0 +1,394 @@
+:root {
+  color-scheme: light;
+  --bg: #f7f6f2;
+  --ink: #1f2a37;
+  --muted: #667085;
+  --card: #ffffff;
+  --accent: #1e3a8a;
+  --accent-soft: #dbeafe;
+  --line-casing: #fefefe;
+  --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  --ring-like: #3b82f6;
+  --ring-explore: #f59e0b;
+  --ring-neutral: #6b7280;
+  --ring-dislike: #ef4444;
+  --ring-avoid: #111827;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2.5rem clamp(1.5rem, 3vw, 3rem) 1.5rem;
+  background: linear-gradient(120deg, #f8fafc, #eef2ff);
+}
+
+.app-header h1 {
+  margin: 0.25rem 0 0.5rem;
+  font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+  margin: 0;
+  color: var(--muted);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  max-width: 40rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.import-label {
+  position: relative;
+  overflow: hidden;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.import-label input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+  background: #f1f5f9;
+}
+
+.tab {
+  border: none;
+  background: transparent;
+  padding: 0.9rem 1.2rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+main {
+  padding: 1.5rem;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(260px, 320px);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.card,
+.panel {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: var(--shadow);
+}
+
+.card h2,
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.filter-group {
+  margin-bottom: 1rem;
+}
+
+.filter-group p {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  border: 1px solid #cbd5f5;
+  background: #eef2ff;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.chip.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.filter-actions {
+  margin-top: 0.75rem;
+}
+
+.map-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.map-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.zoom-controls button {
+  border: none;
+  background: var(--card);
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.map-container {
+  position: relative;
+  background: #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 640px;
+  box-shadow: var(--shadow);
+}
+
+#tubeMap {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+#tubeMap:active {
+  cursor: grabbing;
+}
+
+.basemap {
+  fill: #f8fafc;
+}
+
+.line-path {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.line-casing {
+  stroke: var(--line-casing);
+  stroke-width: 9;
+}
+
+.station-dot {
+  fill: #fff;
+  stroke: #0f172a;
+  stroke-width: 2;
+}
+
+.station-interchange {
+  fill: #fff;
+  stroke: #0f172a;
+  stroke-width: 3;
+}
+
+.station-ring {
+  fill: none;
+  stroke-width: 3;
+}
+
+.neighbourhood {
+  opacity: 0.35;
+}
+
+.station-label,
+.line-label,
+.neighbourhood-label {
+  font-size: 12px;
+  fill: #0f172a;
+  pointer-events: none;
+}
+
+.line-label {
+  font-weight: 700;
+}
+
+.hidden {
+  display: none;
+}
+
+.side-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.side-panel input,
+.side-panel select,
+.side-panel textarea,
+.card input,
+.card select,
+.panel input,
+.panel select {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+.primary {
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.ghost {
+  border: 1px solid #cbd5f5;
+  background: #fff;
+  color: var(--accent);
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.panel-empty {
+  text-align: center;
+  color: var(--muted);
+}
+
+.tooltip {
+  position: absolute;
+  background: #111827;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -100%);
+  transition: opacity 0.15s ease;
+}
+
+.legend {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+.legend span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.legend i {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+  border: 2px solid currentColor;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shortlist-item {
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.shortlist-item h3 {
+  margin: 0 0 0.2rem;
+}
+
+.commute-summary {
+  padding: 0.6rem;
+  background: #f1f5f9;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.app-footer {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+@media (max-width: 1200px) {
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .map-panel {
+    order: -1;
+  }
+}

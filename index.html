@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>London Property Zone-In</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">London Property Zone-In</p>
+        <h1>Personal Tube-Aware Property Explorer</h1>
+        <p class="subtitle">
+          Track stations, neighbourhoods, and commute anchors with a calm schematic map built for your
+          own discovery.
+        </p>
+      </div>
+      <div class="header-actions">
+        <button id="exportData" class="ghost">Export JSON</button>
+        <label class="import-label">
+          Import JSON
+          <input id="importData" type="file" accept="application/json" />
+        </label>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Primary">
+      <button class="tab active" data-tab="map">Map</button>
+      <button class="tab" data-tab="shortlist">Shortlist</button>
+      <button class="tab" data-tab="commute">Commute</button>
+      <button class="tab" data-tab="notes">Notes</button>
+    </nav>
+
+    <main>
+      <section id="map" class="tab-panel active">
+        <div class="map-layout">
+          <aside class="map-controls">
+            <div class="card">
+              <h2>Search</h2>
+              <input
+                id="searchInput"
+                type="search"
+                placeholder="Search station or neighbourhood"
+                list="searchOptions"
+              />
+              <datalist id="searchOptions"></datalist>
+            </div>
+
+            <div class="card">
+              <h2>Filters</h2>
+              <div class="filter-group">
+                <p>Lines</p>
+                <div id="lineFilters" class="chips"></div>
+              </div>
+              <div class="filter-group">
+                <p>Status</p>
+                <div id="statusFilters" class="chips"></div>
+              </div>
+              <div class="filter-group">
+                <p>Tags</p>
+                <div id="tagFilters" class="chips"></div>
+              </div>
+              <label class="checkbox">
+                <input id="interchangeFilter" type="checkbox" />
+                Interchanges only
+              </label>
+              <div class="filter-actions">
+                <button id="clearFilters" type="button" class="ghost">Clear filters</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2>Layers</h2>
+              <label class="checkbox">
+                <input id="toggleNeighbourhoods" type="checkbox" checked />
+                Neighbourhood blobs
+              </label>
+              <label class="checkbox">
+                <input id="toggleLineLabels" type="checkbox" checked />
+                Line labels
+              </label>
+            </div>
+
+            <div class="card">
+              <h2>Commute anchors</h2>
+              <div id="anchorList" class="stack"></div>
+              <button id="addAnchor" class="ghost">Add anchor</button>
+            </div>
+          </aside>
+
+          <section class="map-panel">
+            <div class="map-toolbar">
+              <div class="zoom-controls">
+                <button id="zoomIn">+</button>
+                <button id="zoomOut">−</button>
+                <button id="resetView">Reset</button>
+              </div>
+              <div class="legend" id="statusLegend"></div>
+            </div>
+            <div id="mapContainer" class="map-container">
+              <svg id="tubeMap" viewBox="0 0 900 700" role="img" aria-label="Schematic London map">
+                <rect class="basemap" x="0" y="0" width="900" height="700" />
+                <g id="neighbourhoodLayer"></g>
+                <g id="lineLayer"></g>
+                <g id="stationLayer"></g>
+                <g id="labelLayer"></g>
+              </svg>
+              <div id="tooltip" class="tooltip" role="status"></div>
+            </div>
+          </section>
+
+          <aside class="side-panel" aria-live="polite">
+            <div id="panelEmpty" class="panel-empty">
+              <h2>Pick a station or neighbourhood</h2>
+              <p>
+                Click dots or shaded blobs to log what you know, rate them, and add them to your
+                shortlist.
+              </p>
+            </div>
+
+            <form id="stationPanel" class="panel hidden">
+              <h2 id="stationName"></h2>
+              <p id="stationLines" class="muted"></p>
+              <label>
+                Status
+                <select id="stationStatus"></select>
+              </label>
+              <label>
+                Rating
+                <select id="stationRating">
+                  <option value="">—</option>
+                  <option value="1">👍</option>
+                  <option value="2">😐</option>
+                  <option value="3">👎</option>
+                </select>
+              </label>
+              <label>
+                Tags
+                <input id="stationTags" type="text" placeholder="e.g. green space, pubs" />
+              </label>
+              <label>
+                Notes
+                <textarea id="stationNotes" rows="4"></textarea>
+              </label>
+              <label>
+                Visited date
+                <input id="stationVisited" type="date" />
+              </label>
+              <button id="toggleShortlist" type="button" class="primary"></button>
+            </form>
+
+            <form id="neighbourhoodPanel" class="panel hidden">
+              <h2 id="neighbourhoodName"></h2>
+              <p id="neighbourhoodStations" class="muted"></p>
+              <label>
+                Status
+                <select id="neighbourhoodStatus"></select>
+              </label>
+              <label>
+                Tags
+                <input id="neighbourhoodTags" type="text" placeholder="e.g. riverside, schools" />
+              </label>
+              <label>
+                Notes
+                <textarea id="neighbourhoodNotes" rows="4"></textarea>
+              </label>
+              <div class="commute-summary" id="commuteSummary"></div>
+              <button id="toggleNeighbourhoodShortlist" type="button" class="primary"></button>
+            </form>
+          </aside>
+        </div>
+      </section>
+
+      <section id="shortlist" class="tab-panel">
+        <div class="panel">
+          <h2>Shortlist</h2>
+          <div class="shortlist-controls">
+            <label>
+              Sort by
+              <select id="shortlistSort">
+                <option value="name">Name</option>
+                <option value="rating">Rating</option>
+                <option value="commute">Commute (best)</option>
+              </select>
+            </label>
+            <label>
+              Filter by tag
+              <input id="shortlistTagFilter" type="text" placeholder="Type a tag" />
+            </label>
+          </div>
+          <div id="shortlistItems" class="stack"></div>
+        </div>
+      </section>
+
+      <section id="commute" class="tab-panel">
+        <div class="panel">
+          <h2>Commute preferences</h2>
+          <p class="muted">
+            Define 1–3 anchors (office, favourite places). Commute times are rough placeholders for now.
+          </p>
+          <div id="anchorManager" class="stack"></div>
+        </div>
+      </section>
+
+      <section id="notes" class="tab-panel">
+        <div class="panel">
+          <h2>Notes</h2>
+          <input id="notesSearch" type="search" placeholder="Search notes" />
+          <div id="notesList" class="stack"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>
+        Built for personal exploration. Data is stored locally in your browser so you can iterate and
+        refine over time.
+      </p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
